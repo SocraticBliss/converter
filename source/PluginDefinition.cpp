@@ -1,4 +1,4 @@
-//this file is part of notepad++
+﻿//this file is part of notepad++
 //Copyright (C)2003 Don HO <donho@altern.org>
 //
 //This program is free software; you can redistribute it and/or
@@ -38,6 +38,7 @@ typedef std::basic_string<TCHAR> generic_string;
 generic_string confPath;
 ConversionPanel _conversionPanel;
 
+
 //
 // Initialize your plugin data here
 // It will be called while plugin loading   
@@ -70,12 +71,14 @@ void commandMenuInit()
     //            bool check0nInit                // optional. Make this menu item be checked visually
     //            );
     setCommand(0, TEXT("ASCII -> HEX"), ascii2Hex, NULL, false);
-    setCommand(1, TEXT("HEX -> ASCII"), hex2Ascii, NULL, false);
-	setCommand(2, TEXT("---"), NULL, NULL, false);
+	setCommand(1, TEXT("HEX -> ASCII"), hex2Ascii, NULL, false);
+	setCommand(2, TEXT("DEC -> 2COMP"), dec2Comp, NULL, false);
+	setCommand(3, TEXT("DEC -> HEX"), dec2Hex, NULL, false);
+	setCommand(4, TEXT("HEX -> 2COMP"), hex2Comp, NULL, false);
+	setCommand(5, TEXT("HEX -> DEC"), hex2Dec, NULL, false);
 	setCommand(CONVERSIONPANEL_INDEX, TEXT("Conversion Panel"), conversionPanel, NULL, false);
-	setCommand(4, TEXT("---"), NULL, NULL, false);
-	setCommand(5, TEXT("Edit Configuration File"), editConf, NULL, false);
-	setCommand(6, TEXT("About"), about, NULL, false);
+	setCommand(7, TEXT("Edit Configuration File"), editConf, NULL, false);
+	setCommand(8, TEXT("About"), about, NULL, false);
 }
 
 //
@@ -452,6 +455,136 @@ void hex2Ascii()
 	}
 }
 
+void dec2Comp()
+{
+	// Load Selected String
+	HexString transformer;
+	const char *encStr = transformer.getStr();
+
+	// Zero Length Check
+	size_t textLen = transformer.length();
+	if (!textLen) return;
+
+	// Selected String to Decimal
+	int value = 0;
+	try {
+		value = std::stoul(encStr);
+		//::MessageBoxA(nppData._nppHandle, std::to_string(encStr).c_str(), "Converter plugin", MB_OK);
+	}
+	catch (...) {
+		::MessageBoxA(NULL, "Does this look like a valid Decimal value to you son? {-_-}", "Converter plugin", MB_OK);
+		return;
+	}
+	
+	// Decimal to New String
+	char str2Display[11];
+
+	sprintf(str2Display, "0x%X", value);
+	//::MessageBoxA(nppData._nppHandle, str2Display, "Converter plugin", MB_OK);
+
+	// Replace the Selected Text
+	HWND hCurrScintilla = getCurrentScintillaHandle();
+	::SendMessage(hCurrScintilla, SCI_REPLACESEL, 0, (LPARAM)str2Display);
+}
+
+void dec2Hex()
+{
+    // Load Selected String
+	HexString transformer;
+	const char *encStr = transformer.getStr();
+
+	// Zero Length Check
+	size_t textLen = transformer.length();
+	if (!textLen) return;
+
+	// Selected String to Decimal
+	int value = 0;
+	try {
+		value = std::stoul(encStr);
+		//::MessageBoxA(nppData._nppHandle, std::to_string(encStr).c_str(), "Converter plugin", MB_OK);
+	} catch (...) {
+		::MessageBoxA(NULL, "Does this look like a valid Decimal value to you son? {-_-}", "Converter plugin", MB_OK);
+		return;
+	}
+
+	// Decimal to New String
+	char str2Display[12];
+
+	if (value < 0)
+		sprintf(str2Display, "-0x%X", abs(value));
+	else
+		sprintf(str2Display, "0x%X", value);
+
+	//::MessageBoxA(nppData._nppHandle, str2Display, "Converter plugin", MB_OK);
+
+	// Replace the Selected Text
+	HWND hCurrScintilla = getCurrentScintillaHandle();
+	::SendMessage(hCurrScintilla, SCI_REPLACESEL, 0, (LPARAM)str2Display);
+}
+
+void hex2Comp()
+{
+	// Load Selected String
+	HexString transformer;
+	const char *encStr = transformer.getStr();
+	//::MessageBoxA(nppData._nppHandle, std::to_string(encStr).c_str(), "Converter plugin", MB_OK);
+
+	// Zero Length Check
+	size_t textLen = transformer.length();
+	if (!textLen) return;
+
+	// Selected String to Decimal
+	int value = 0;
+	try {
+		value = std::stoul(encStr, 0, 16);
+	}
+	catch (...) {
+		::MessageBoxA(NULL, "Does this look like a valid Hexadecimal value to you son? {-_-}", "Converter plugin", MB_OK);
+		return;
+	}
+
+	// Decimal to New String
+	char str2Display[12];
+
+	sprintf(str2Display, "%d", value);
+	//::MessageBoxA(nppData._nppHandle, str2Display, "Converter plugin", MB_OK);
+
+	// Replace the Selected Text
+	HWND hCurrScintilla = getCurrentScintillaHandle();
+	::SendMessage(hCurrScintilla, SCI_REPLACESEL, 0, (LPARAM)str2Display);
+}
+
+void hex2Dec()
+{
+	// Load Selected String
+	HexString transformer;
+	const char *encStr = transformer.getStr();
+	//::MessageBoxA(nppData._nppHandle, std::to_string(encStr).c_str(), "Converter plugin", MB_OK);
+
+	// Zero Length Check
+	size_t textLen = transformer.length();
+	if (!textLen) return;
+
+	// Selected String to Decimal
+	int value = 0;
+	try {
+		value = std::stoul(encStr, 0, 16);
+	}
+	catch (...) {
+		::MessageBoxA(NULL, "Does this look like a valid Hexadecimal value to you son? {-_-}", "Converter plugin", MB_OK);
+		return;
+	}
+
+	// Decimal to New String
+	char str2Display[12];
+
+	sprintf(str2Display, "%u", value);
+	//::MessageBoxA(nppData._nppHandle, str2Display, "Converter plugin", MB_OK);
+
+	// Replace the Selected Text
+	HWND hCurrScintilla = getCurrentScintillaHandle();
+	::SendMessage(hCurrScintilla, SCI_REPLACESEL, 0, (LPARAM)str2Display);
+}
 
 void about()
 {
@@ -460,6 +593,7 @@ void about()
 	aboutMsg += TEXT("\r\r");
 	aboutMsg += TEXT("License: GPL\r\r");
 	aboutMsg += TEXT("Author: Don Ho <don.h@free.fr>\r");
+	aboutMsg += TEXT("Patcher: SocraticBliss @SocraticBliss\r");
 	::MessageBox(nppData._nppHandle, aboutMsg.c_str(), TEXT("Converter Plugin"), MB_OK);
 }
 

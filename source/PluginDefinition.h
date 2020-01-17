@@ -36,8 +36,8 @@ const TCHAR NPP_PLUGIN_NAME[] = TEXT("Converter");
 //
 // Here define the number of your plugin commands
 //
-const int nbFunc = 7;
-#define CONVERSIONPANEL_INDEX 3
+const int nbFunc = 8;
+#define CONVERSIONPANEL_INDEX 6
 
 //
 // Initialization of your plugin data
@@ -172,6 +172,10 @@ void ascii2hex(bool insertSpace, bool isMaj, size_t nbCharPerLine);
 void ascii2Hex();
 int getTrueHexValue(char c);
 void hex2Ascii();
+void dec2Comp();
+void dec2Hex();
+void hex2Comp();
+void hex2Dec();
 void conversionPanel();
 void editConf();
 void about();

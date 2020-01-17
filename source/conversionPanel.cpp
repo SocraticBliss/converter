@@ -171,7 +171,8 @@ bool ConversionPanel::qualified(TCHAR *str, int id)
 		}
 		else if (id == ID_DEC_EDIT)
 		{
-			if (!(str[i] >= '0' && str[i] <= '9'))
+			if (!((str[i] >= '0' && str[i] <= '9') ||
+				  (str[i] == '-')))
 			{
 				
 				return false;
@@ -309,22 +310,22 @@ void ConversionPanel::setValueExcept(int exceptID, size_t value)
 
 	if (exceptID != ID_DEC_EDIT)
 	{
-		generic_sprintf(str2Display, strLen, TEXT("%d"), (size_t)value);
+		generic_sprintf(str2Display, strLen, TEXT("%d"), (int)value);
 		::SendDlgItemMessage(_hSelf, ID_DEC_EDIT, WM_SETTEXT, 0, (LPARAM)str2Display);
 	}
 	if (exceptID != ID_HEX_EDIT)
 	{
-		generic_sprintf(str2Display, strLen, TEXT("%X"), (size_t)value);
+		generic_sprintf(str2Display, strLen, TEXT("%X"), (int)value);
 		::SendDlgItemMessage(_hSelf, ID_HEX_EDIT, WM_SETTEXT, 0, (LPARAM)str2Display);
 	}
 	if (exceptID != ID_OCT_EDIT)
 	{
-		generic_sprintf(str2Display, strLen, TEXT("%o"), (size_t)value);
+		generic_sprintf(str2Display, strLen, TEXT("%o"), (int)value);
 		::SendDlgItemMessage(_hSelf, ID_OCT_EDIT, WM_SETTEXT, 0, (LPARAM)str2Display);
 	}
 	if (exceptID != ID_BIN_EDIT)
 	{
-		char str2DisplayA[1234];
+		char str2DisplayA[1024];
 		itoa(int(value), str2DisplayA, 2);
 		::SendDlgItemMessageA(_hSelf, ID_BIN_EDIT, WM_SETTEXT, 0, (LPARAM)str2DisplayA);
 	}
